@@ -9,7 +9,7 @@ from sumy.utils import get_stop_words
 from nltk.tokenize import sent_tokenize
 
 LANGUAGE = "english"
-SENTENCES_COUNT = 5
+SENTENCES_COUNT = 3
 
 
 def summarize_lsa(document, sentences_count=SENTENCES_COUNT):

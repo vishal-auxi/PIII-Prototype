@@ -1,15 +1,14 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from pptx import Presentation
 import wikipedia
 
 from Summarizer import summarize_lsa, sentence_count
+from team_slide import create_team_slide
 
 app = Flask(__name__)
 
 
 def get_summarized_sections(ppt_subject):
-    print("in get_summarized_sections")
-
     pages_search = wikipedia.search(ppt_subject, results=5, suggestion=False)
     page_suggest = wikipedia.suggest(ppt_subject)
 
@@ -18,7 +17,18 @@ def get_summarized_sections(ppt_subject):
 
     page_match = ppt_subject
     if pages_search:
-        page_match = pages_search[0]
+        print(pages_search)
+        for page in pages_search:
+            print("in loop for i = " + page)
+            try:
+                wikipedia.page(page).content
+                page_match = page
+                break
+            except wikipedia.DisambiguationError as e:
+                continue
+            except Exception as e:
+                continue
+        # page_match = pages_search[0]
     elif page_suggest:
         page_match = page_suggest
 
@@ -51,7 +61,7 @@ def create_ppt(ppt_subject):
 
     result = get_summarized_sections(ppt_subject)
     if not result:
-        return False
+        return (False,)
 
     page_title = result[0]
     sections = result[1]
@@ -87,24 +97,56 @@ def create_ppt(ppt_subject):
         # subtitle.text = section[1][0]
         subtitle.text = subtitle_text
 
-    prs.save(page_title + " - Presentation.pptx")
+    prs.save("Presentation - " + page_title + ".pptx")
 
-    return
+    return True, page_title
 
 
-# def create_ppt(ppt_title):
-#     print("in create_ppt")
-#     prs = Presentation()
-#     title_slide_layout = prs.slide_layouts[0]
-#     slide = prs.slides.add_slide(title_slide_layout)
-#     title = slide.shapes.title
-#     subtitle = slide.placeholders[1]
-#
-#     title.text = ppt_title
-#     subtitle.text = "Created with Powerpoint Bot"
-#
-#     prs.save(ppt_title + ".pptx")
-#     return
+def create_ppt_with_count(ppt_subject, count):
+    print("in create_ppt_with_count")
+
+    result = get_summarized_sections(ppt_subject)
+    if not result:
+        return (False,)
+
+    page_title = result[0]
+    sections = result[1]
+    url = result[2]
+
+    prs = Presentation()
+    title_slide_layout = prs.slide_layouts[0]
+    slide = prs.slides.add_slide(title_slide_layout)
+    title = slide.shapes.title
+    subtitle = slide.placeholders[1]
+
+    title.text = page_title
+    subtitle.text = "Created by Presentation Bot \n (Sourced from {url})".format(url=url)
+
+    total = 0
+    for section in sections.items():
+        if total >= count:
+            break
+
+        if not section[1]:
+            continue
+
+        slide_layout = prs.slide_layouts[1]
+        slide = prs.slides.add_slide(slide_layout)
+        title = slide.shapes.title
+        subtitle = slide.placeholders[1]
+
+        title.text = section[0]
+        subtitle_text = ""
+        for i in section[1]:
+            subtitle_text = subtitle_text + "\n" + i
+        # subtitle.text = section[1][0]
+        subtitle.text = subtitle_text
+
+        total += 1
+
+    prs.save("Presentation - " + page_title + ".pptx")
+
+    return True, page_title, total
 
 
 @app.route("/", methods=['POST'])
@@ -114,11 +156,38 @@ def ppt_request_handle():
     print(req)
 
     if req["req"] == "create_ppt":
-        create_ppt(req["title"])
-    return f"Request successful", 200
+        result = create_ppt(req["title"])
+        if result[0]:
+            response = {
+                "message": "Request successful",
+                "title": result[1]
+            }
+            return jsonify(response), 200
+
+    elif req["req"] == "create_ppt_count":
+        result = create_ppt_with_count(req["title"], req["count"])
+        if result[0]:
+            response = {
+                "message": "Request successful",
+                "title": result[1],
+                "count": result[2],
+            }
+            return jsonify(response), 200
+
+    elif req["req"] == "create_team_slide":
+        result = create_team_slide(req["people"])
+        response = {
+            "message": result[1]
+        }
+        if result[0]:
+            return jsonify(response), 200
+        else:
+            return jsonify(response), 400
+
+    return f"Cannot process request", 400
 
 
 # 'Main' function to run
 if __name__ == '__main__':
-    # app.run(debug=True)  # run server in debug mode
-    create_ppt("Coronavirus")
+    app.run(debug=True)  # run server in debug mode
+    # create_team_slide([])
