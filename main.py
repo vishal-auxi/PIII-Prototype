@@ -4,6 +4,8 @@ import wikipedia
 
 from Summarizer import summarize_lsa, sentence_count
 from team_slide import create_team_slide
+from pie_chart import create_pie_chart
+from bar_chart import create_bar_chart
 
 app = Flask(__name__)
 
@@ -184,10 +186,44 @@ def ppt_request_handle():
         else:
             return jsonify(response), 400
 
+    elif req["req"] == "create_pie_chart":
+        result = create_pie_chart(req)
+        response = {
+            "message": result[1]
+        }
+        if result[0]:
+            return jsonify(response), 200
+        else:
+            return jsonify(response), 400
+
+    elif req["req"] == "create_bar_chart":
+        result = create_bar_chart(req)
+        response = {
+            "message": result[1]
+        }
+        if result[0]:
+            return jsonify(response), 200
+        else:
+            return jsonify(response), 400
+
     return f"Cannot process request", 400
 
 
 # 'Main' function to run
 if __name__ == '__main__':
     app.run(debug=True)  # run server in debug mode
-    # create_team_slide([])
+
+    # create_team_slide(["chris", "john", "mike", "steve"])
+    # res = create_pie_chart({
+    #     'req': 'create_pie_chart',
+    #     'categories': ['USA', 'Canada', 'Mexico'],
+    #     'percentages': ['30', '30', '40']}
+    # )
+
+    # res = create_bar_chart({
+    #     'req': 'create_bar_chart',
+    #     'categories': ['USA', 'Canada', 'Mexico'],
+    #     'values': ['81', '45', '54']}
+    # )
+
+    # print(res)
