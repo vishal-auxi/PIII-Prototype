@@ -28,6 +28,9 @@ def create_bar_chart(details):
         XL_CHART_TYPE.COLUMN_CLUSTERED, x, y, cx, cy, chart_data
     )
 
+    # chart.chart_title.text_frame.text = details['title'].title()
+    slide.placeholders[0].text = details['title'].title()
+
     prs.save('Presentation - Bar Chart.pptx')
 
     return True, "Created the Bar Chart"
