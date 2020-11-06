@@ -152,6 +152,33 @@ def create_ppt_with_count(ppt_subject, count):
     return True, page_title, total
 
 
+def create_charts(req_body):
+    details = req_body['details']
+
+    success = True
+    response = ''
+
+    if 'create_pie_chart' in details and details['create_pie_chart'] and details['pie_data']:
+        pie_response = create_pie_chart(details['pie_data'])
+        success = success and pie_response[0]
+        response = "{pr}".format(response=response, pr=pie_response[1])
+
+    if 'create_bar_chart' in details and details['create_bar_chart'] and details['bar_data']:
+        bar_response = create_bar_chart(details['bar_data'])
+        success = success and bar_response[0]
+        response = "{response}. {br}".format(response=response, br=bar_response[1])
+
+    if 'create_line_chart' in details and details['create_line_chart'] and details['line_data']:
+        line_response = create_line_chart(details['line_data'])
+        success = success and line_response[0]
+        response = "{response}. {lr}".format(response=response, lr=line_response[1])
+
+    if success:
+        return True, response
+    else:
+        return False, response
+
+
 @app.route("/", methods=['POST'])
 def ppt_request_handle():
     print("in ppt_request_handle")
@@ -217,6 +244,16 @@ def ppt_request_handle():
         else:
             return jsonify(response), 400
 
+    elif req["req"] == "create_chart" or req["req"] == "create_charts":
+        result = create_charts(req)
+        response = {
+            "message": result[1]
+        }
+        if result[0]:
+            return jsonify(response), 200
+        else:
+            return jsonify(response), 400
+
     return f"Cannot process request", 400
 
 
@@ -243,4 +280,27 @@ if __name__ == '__main__':
     #     "Value": [20, 30]}
     # )
 
+    # req = {
+    #     "req": "create_chart",
+    #     "details": {
+    #         "create_pie_chart": True,
+    #         "pie_data": {
+    #             "categories": ["Russia", "India", "Bangladesh"],
+    #             "percentages": [30.0, 30.0, 40.0]
+    #         },
+    #         "create_bar_chart": True,
+    #         "bar_data": {
+    #             "categories": ["Russia", "Russia", "Russia"],
+    #             "values": [20, 20]
+    #         },
+    #         "create_line_chart": True,
+    #         "line_data": {
+    #             "Label": ["India", "Bangladesh"],
+    #             "Value": [20, 30]
+    #         }
+    #     }
+    # }
+    #
+    # res = create_charts(req)
+    #
     # print(res)
