@@ -50,8 +50,9 @@ def create_pie_chart(details):
     data_labels.number_format = '0%'
     data_labels.position = XL_DATA_LABEL_POSITION.OUTSIDE_END
 
-    # chart.chart_title.text_frame.text = details['title'].title()
-    slide.placeholders[0].text = details['title'].title()
+    if 'title' in details:
+        slide.placeholders[0].text = details['title'].title()
+        # chart.chart_title.text_frame.text = details['title'].title()
 
     prs.save('Presentation - Pie Chart.pptx')
 

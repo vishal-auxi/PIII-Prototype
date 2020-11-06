@@ -6,6 +6,7 @@ from Summarizer import summarize_lsa, sentence_count
 from team_slide import create_team_slide
 from pie_chart import create_pie_chart
 from bar_chart import create_bar_chart
+from line_chart import create_line_chart
 
 app = Flask(__name__)
 
@@ -206,6 +207,16 @@ def ppt_request_handle():
         else:
             return jsonify(response), 400
 
+    elif req["req"] == "create_line_chart":
+        result = create_line_chart(req)
+        response = {
+            "message": result[1]
+        }
+        if result[0]:
+            return jsonify(response), 200
+        else:
+            return jsonify(response), 400
+
     return f"Cannot process request", 400
 
 
@@ -224,6 +235,12 @@ if __name__ == '__main__':
     #     'req': 'create_bar_chart',
     #     'categories': ['USA', 'Canada', 'Mexico'],
     #     'values': ['81', '45', '54']}
+    # )
+
+    # res = create_line_chart({
+    #     'req': 'create_line_chart',
+    #     "Label": ["India", "Bangladesh"],
+    #     "Value": [20, 30]}
     # )
 
     # print(res)
