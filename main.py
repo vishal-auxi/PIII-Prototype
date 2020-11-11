@@ -80,16 +80,14 @@ def create_ppt(ppt_subject):
     #     print("\n")
 
     # prs = Presentation()
+    # title_slide_layout = prs.slide_layouts[0]
 
     try:
         prs = Presentation('./Final - Presentation.pptx')
     except exc.PackageNotFoundError as err:
         # print(f'No presentation file: {err}')
         prs = Presentation(BASE_PRESENTATION)
-
-    # title_slide_layout = prs.slide_layouts[0]
-    prs_blank = Presentation()
-    title_slide_layout = prs_blank.slide_layouts[0]
+    title_slide_layout = prs.slide_layouts[5]
 
     slide = prs.slides.add_slide(title_slide_layout)
     title = slide.shapes.title
@@ -102,7 +100,9 @@ def create_ppt(ppt_subject):
         if not section[1]:
             continue
 
-        slide_layout = prs.slide_layouts[1]
+        # slide_layout = prs.slide_layouts[1]
+        slide_layout = prs.slide_layouts[6]
+
         slide = prs.slides.add_slide(slide_layout)
         title = slide.shapes.title
         subtitle = slide.placeholders[1]
@@ -114,7 +114,8 @@ def create_ppt(ppt_subject):
         # subtitle.text = section[1][0]
         subtitle.text = subtitle_text
 
-    prs.save("Presentation - " + page_title + ".pptx")
+    # prs.save("Presentation - " + page_title + ".pptx")
+    prs.save('Final - Presentation.pptx')
 
     return True, page_title
 
@@ -130,8 +131,16 @@ def create_ppt_with_count(ppt_subject, count):
     sections = result[1]
     url = result[2]
 
-    prs = Presentation()
-    title_slide_layout = prs.slide_layouts[0]
+    # prs = Presentation()
+    # title_slide_layout = prs.slide_layouts[0]
+
+    try:
+        prs = Presentation('./Final - Presentation.pptx')
+    except exc.PackageNotFoundError as err:
+        # print(f'No presentation file: {err}')
+        prs = Presentation(BASE_PRESENTATION)
+    title_slide_layout = prs.slide_layouts[5]
+
     slide = prs.slides.add_slide(title_slide_layout)
     title = slide.shapes.title
     subtitle = slide.placeholders[1]
@@ -147,7 +156,9 @@ def create_ppt_with_count(ppt_subject, count):
         if not section[1]:
             continue
 
-        slide_layout = prs.slide_layouts[1]
+        # slide_layout = prs.slide_layouts[1]
+        slide_layout = prs.slide_layouts[6]
+
         slide = prs.slides.add_slide(slide_layout)
         title = slide.shapes.title
         subtitle = slide.placeholders[1]
@@ -161,7 +172,8 @@ def create_ppt_with_count(ppt_subject, count):
 
         total += 1
 
-    prs.save("Presentation - " + page_title + ".pptx")
+    # prs.save("Presentation - " + page_title + ".pptx")
+    prs.save('Final - Presentation.pptx')
 
     return True, page_title, total
 
