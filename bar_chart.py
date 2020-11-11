@@ -1,15 +1,22 @@
-from pptx import Presentation
+from pptx import Presentation, exc
 from pptx.chart.data import CategoryChartData, ChartData
 from pptx.enum.chart import XL_CHART_TYPE, XL_LEGEND_POSITION, XL_DATA_LABEL_POSITION
 from pptx.util import Inches
 
 
-def create_bar_chart(details):
+def create_bar_chart(details, base=None):
     if len(details["categories"]) != len(details["values"]):
         return False, "Couldn't create the bar chart as the number of categories and values are not equal"
 
-    prs = Presentation()
-    slide = prs.slides.add_slide(prs.slide_layouts[5])
+    # prs = Presentation()
+    # slide = prs.slides.add_slide(prs.slide_layouts[5])
+
+    try:
+        prs = Presentation('./Final - Presentation.pptx')
+    except exc.PackageNotFoundError as err:
+        # print(f'No presentation file: {err}')
+        prs = Presentation(base)
+    slide = prs.slides.add_slide(prs.slide_layouts[10])
 
     chart_data = CategoryChartData()
 
@@ -32,6 +39,6 @@ def create_bar_chart(details):
         slide.placeholders[0].text = details['title'].title()
         # chart.chart_title.text_frame.text = details['title'].title()
 
-    prs.save('Presentation - Bar Chart.pptx')
+    prs.save('Final - Presentation.pptx')
 
     return True, "Created the Bar Chart"

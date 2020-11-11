@@ -1,8 +1,8 @@
-from pptx import Presentation
+from pptx import Presentation, exc
 import json
 
 
-def create_team_slide(people):
+def create_team_slide(people, base=None):
     count = len(people)
 
     if count > 4:
@@ -11,7 +11,13 @@ def create_team_slide(people):
     with open('../../misc/Details/details.json') as json_file:
         data = json.load(json_file)
 
-    prs = Presentation('../../misc/Team_Slide_Custom.pptx')
+    # prs = Presentation(base)
+
+    try:
+        prs = Presentation('./Final - Presentation.pptx')
+    except exc.PackageNotFoundError as err:
+        # print(f'No presentation file: {err}')
+        prs = Presentation(base)
 
     details = [data["user"]]
     for i in people:
@@ -72,7 +78,7 @@ def create_team_slide(people):
         phs[ph_images[i]].insert_picture(details[i]["img"])
         phs[ph_about[i]].text = details[i]["about"]
 
-    prs.save("Presentation - Team Slide.pptx")
+    prs.save('Final - Presentation.pptx')
     return True, "Created the team slide"
 
 # def create_team_slide(people):

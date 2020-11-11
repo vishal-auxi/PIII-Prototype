@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from pptx import Presentation
+from pptx import Presentation, exc
 import wikipedia
 
 from Summarizer import summarize_lsa, sentence_count
@@ -9,6 +9,8 @@ from bar_chart import create_bar_chart
 from line_chart import create_line_chart
 
 import json
+
+BASE_PRESENTATION = "../Team_Slide_Custom.pptx"
 
 app = Flask(__name__)
 
@@ -77,8 +79,18 @@ def create_ppt(ppt_subject):
     #     print(section[1])
     #     print("\n")
 
-    prs = Presentation()
-    title_slide_layout = prs.slide_layouts[0]
+    # prs = Presentation()
+
+    try:
+        prs = Presentation('./Final - Presentation.pptx')
+    except exc.PackageNotFoundError as err:
+        # print(f'No presentation file: {err}')
+        prs = Presentation(BASE_PRESENTATION)
+
+    # title_slide_layout = prs.slide_layouts[0]
+    prs_blank = Presentation()
+    title_slide_layout = prs_blank.slide_layouts[0]
+
     slide = prs.slides.add_slide(title_slide_layout)
     title = slide.shapes.title
     subtitle = slide.placeholders[1]
@@ -220,7 +232,7 @@ def ppt_request_handle():
             return jsonify(response), 400
 
     elif req["req"] == "create_pie_chart":
-        result = create_pie_chart(req)
+        result = create_pie_chart(req, BASE_PRESENTATION)
         response = {
             "message": result[1]
         }
@@ -230,7 +242,7 @@ def ppt_request_handle():
             return jsonify(response), 400
 
     elif req["req"] == "create_bar_chart":
-        result = create_bar_chart(req)
+        result = create_bar_chart(req, BASE_PRESENTATION)
         response = {
             "message": result[1]
         }
@@ -240,7 +252,7 @@ def ppt_request_handle():
             return jsonify(response), 400
 
     elif req["req"] == "create_line_chart":
-        result = create_line_chart(req)
+        result = create_line_chart(req, BASE_PRESENTATION)
         response = {
             "message": result[1]
         }
@@ -276,23 +288,35 @@ def ppt_request_handle():
 if __name__ == '__main__':
     app.run(debug=True)  # run server in debug mode
 
-    # create_team_slide(["chris", "john", "mike", "steve"])
+    # with open('./1.json') as json_file:
+    #     data = json.load(json_file)
+    #
+    # print(data)
+    # create_ppt(data['title'])
+
+    # try:
+    #     prs = Presentation('./Final - Presentation.pptx')
+    # except exc.PackageNotFoundError as err:
+    #     # print(f'No presentation file: {err}')
+    #     prs = Presentation('../../misc/Team_Slide_Custom.pptx')
+
+    # create_team_slide(["chris", "john", "mike", "steve"], BASE_PRESENTATION)
     # res = create_pie_chart({
     #     'req': 'create_pie_chart',
     #     'categories': ['USA', 'Canada', 'Mexico'],
-    #     'percentages': ['30', '30', '40']}
+    #     'percentages': ['30', '30', '40']}, BASE_PRESENTATION
     # )
-
+    #
     # res = create_bar_chart({
     #     'req': 'create_bar_chart',
     #     'categories': ['USA', 'Canada', 'Mexico'],
-    #     'values': ['81', '45', '54']}
+    #     'values': ['81', '45', '54']}, BASE_PRESENTATION
     # )
-
+    #
     # res = create_line_chart({
     #     'req': 'create_line_chart',
     #     "Label": ["India", "Bangladesh"],
-    #     "Value": [20, 30]}
+    #     "Value": [20, 30]}, BASE_PRESENTATION
     # )
 
     # req = {
