@@ -8,6 +8,8 @@ from pie_chart import create_pie_chart
 from bar_chart import create_bar_chart
 from line_chart import create_line_chart
 
+import json
+
 app = Flask(__name__)
 
 
@@ -185,6 +187,9 @@ def ppt_request_handle():
     req = request.json
     print(req)
 
+    with open("req_sample.json", "w") as outfile:
+        json.dump(req, outfile)
+
     if req["req"] == "create_ppt":
         result = create_ppt(req["title"])
         if result[0]:
@@ -246,6 +251,16 @@ def ppt_request_handle():
 
     elif req["req"] == "create_chart" or req["req"] == "create_charts":
         result = create_charts(req)
+        response = {
+            "message": result[1]
+        }
+        if result[0]:
+            return jsonify(response), 200
+        else:
+            return jsonify(response), 400
+
+    elif req["req"] == "create_org_chart":
+        result = True, 'Got the request'
         response = {
             "message": result[1]
         }
