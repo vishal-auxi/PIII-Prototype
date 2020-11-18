@@ -1,6 +1,8 @@
 from pptx import Presentation, exc
 import json
 
+details_path = './details.json'
+
 
 def create_team_slide(people, base=None):
     count = len(people)
@@ -8,7 +10,7 @@ def create_team_slide(people, base=None):
     if count > 4:
         return False, "Couldn't create the team slide as there were too many people"
 
-    with open('../../misc/Details/details.json') as json_file:
+    with open(details_path) as json_file:
         data = json.load(json_file)
 
     # prs = Presentation(base)

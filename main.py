@@ -8,9 +8,13 @@ from pie_chart import create_pie_chart
 from bar_chart import create_bar_chart
 from line_chart import create_line_chart
 
+from news_scraper import create_ppt_ny
+
 import json
 
-BASE_PRESENTATION = "../Team_Slide_Custom.pptx"
+import os
+
+BASE_PRESENTATION = "./Team_Slide_Custom.pptx"
 
 app = Flask(__name__)
 
@@ -185,17 +189,17 @@ def create_charts(req_body):
     response = ''
 
     if 'create_pie_chart' in details and details['create_pie_chart'] and details['pie_data']:
-        pie_response = create_pie_chart(details['pie_data'])
+        pie_response = create_pie_chart(details['pie_data'], BASE_PRESENTATION)
         success = success and pie_response[0]
         response = "{pr}".format(response=response, pr=pie_response[1])
 
     if 'create_bar_chart' in details and details['create_bar_chart'] and details['bar_data']:
-        bar_response = create_bar_chart(details['bar_data'])
+        bar_response = create_bar_chart(details['bar_data'], BASE_PRESENTATION)
         success = success and bar_response[0]
         response = "{response}. {br}".format(response=response, br=bar_response[1])
 
     if 'create_line_chart' in details and details['create_line_chart'] and details['line_data']:
-        line_response = create_line_chart(details['line_data'])
+        line_response = create_line_chart(details['line_data'], BASE_PRESENTATION)
         success = success and line_response[0]
         response = "{response}. {lr}".format(response=response, lr=line_response[1])
 
@@ -214,7 +218,7 @@ def ppt_request_handle():
     with open("req_sample.json", "w") as outfile:
         json.dump(req, outfile)
 
-    if req["req"] == "create_ppt":
+    if req["req"] == "create_ppt" and req["source"].lower() == "wikipedia":
         result = create_ppt(req["title"])
         if result[0]:
             response = {
@@ -223,8 +227,18 @@ def ppt_request_handle():
             }
             return jsonify(response), 200
 
-    elif req["req"] == "create_ppt_count":
+    elif req["req"] == "create_ppt_count" and req["source"].lower() == "wikipedia":
         result = create_ppt_with_count(req["title"], req["count"])
+        if result[0]:
+            response = {
+                "message": "Request successful",
+                "title": result[1],
+                "count": result[2],
+            }
+            return jsonify(response), 200
+
+    elif req["req"] == "create_ppt_count" and req["source"].lower() == "nytimes":
+        result = create_ppt_ny(req["title"], req["count"])
         if result[0]:
             response = {
                 "message": "Request successful",
@@ -298,12 +312,14 @@ def ppt_request_handle():
 
 # 'Main' function to run
 if __name__ == '__main__':
-    app.run(debug=True)  # run server in debug mode
+    # app.run(debug=True)  # run server in debug mode
 
-    # with open('./1.json') as json_file:
-    #     data = json.load(json_file)
-    #
-    # print(data)
+    os.chdir("/Users/vishal/Documents/Auxi/PIII-Prototype/PIII-Prototype-First")
+    with open('./1.json') as json_file:
+        data = json.load(json_file)
+
+    print(data)
+    create_ppt_ny(data['title'], data['count'])
     # create_ppt(data['title'])
 
     # try:

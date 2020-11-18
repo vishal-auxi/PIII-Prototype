@@ -1,0 +1,36 @@
+{
+  "count": 4,
+  "team": "Analytics Team",
+  "user": {
+    "name": "Martin Tyler",
+    "role": "Team Lead",
+    "about": "Martin has a strong expertise in Management. He will be in charge of the team. He has 5 years of experience in Management",
+    "img": "/Users/vishal/Documents/Auxi/misc/Details/images/Martin.jpg"
+  },
+  "people": [
+    {
+      "name": "Chris Jones",
+      "role": "Operations",
+      "about": "Chris has a strong expertise in Operations. He will be in charge of Ops. He has 3 years of experience in Operations",
+      "img": "/Users/vishal/Documents/Auxi/misc/Details/images/Chris.jpg"
+    },
+    {
+      "name": "John Smith",
+      "role": "SDE II",
+      "about": "John has a strong expertise in Development. He will be in charge of design. He has 4 years of experience in Development",
+      "img": "/Users/vishal/Documents/Auxi/misc/Details/images/John.jpg"
+    },
+    {
+      "name": "Steve Miller",
+      "role": "SDE I",
+      "about": "Steve has a strong expertise in testing. He will be in charge of support. He has 2 years of experience in Testing",
+      "img": "/Users/vishal/Documents/Auxi/misc/Details/images/Steve.jpg"
+    },
+    {
+      "name": "Mike Davis",
+      "role": "Research",
+      "about": "Mike has a strong expertise in Analytics. He will be in charge of Research. He has 3 years of experience in Analytics",
+      "img": "/Users/vishal/Documents/Auxi/misc/Details/images/Mike.jpg"
+    }
+  ]
+}

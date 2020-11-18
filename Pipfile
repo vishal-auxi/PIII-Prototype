@@ -12,6 +12,7 @@ sumy = "*"
 nltk = "*"
 flask = "*"
 numpy = "*"
+requests = "*"
 
 [requires]
 python_version = "3.7"
